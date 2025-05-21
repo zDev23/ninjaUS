@@ -1,0 +1,24 @@
+timeCoord = {
+    "06:41:04":["M:4:317:8","M:5:498:8","M:5:133:7","M:5:134:7","M:4:7:8","M:5:11:8","M:4:190:8",],  
+    "06:55:04":["M:1:5:8","M:3:12:8","M:3:191:8","M:1:171:8","M:3:375:8",], 
+    "07:01:04":["M:2:1:8",], 
+}
+
+
+master="M:2:229:8"
+
+CronExec("00 30 06 * * *", func(){RepatriateNow()})
+
+for time, coord in timeCoord{
+  func(time, coord) {
+    entryID, err = CronExec(time, func() {
+        for c in coord{
+            raccoltaDeuMin(50000000,c,master)
+            LogInfo("<Himalia-Ban> Partito Trasp da "+c)
+            //SleepRandSec(4,8)
+            SleepSec(5)
+        }
+        })
+  }(time, coord)
+}
+<- OnQuitCh
