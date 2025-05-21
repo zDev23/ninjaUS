@@ -1,0 +1,43 @@
+func ripping(){
+    risorseDaCaricare = NewResources(500000000,400000000,100000000) //Risorse per 100 rip
+
+    lc , sc = CalcCargo(risorseDaCaricare.Total())
+    
+    fleet = NewFleet()
+    fleet.SetOrigin("M:2:229:8")
+    fleet.SetDestination("P:2:229:8")
+    fleet.SetSpeed(HUNDRED_PERCENT)
+    fleet.SetMission(TRANSPORT)
+    fleet.SetResources(risorseDaCaricare)
+    fleet.AddShips(LARGECARGO, lc)
+    fleet, err = fleet.SendNow()
+        
+    SleepSec(35)
+    
+    celestial = GetCachedCelestial("P:2:229:8")
+    Build(celestial.GetID(), DEATHSTAR, 100)
+    
+}
+
+func schieroLungo(){
+    
+    celestial = GetCachedCelestial("P:2:229:8")
+    allShips, err= celestial.GetShips()
+
+    prova,_ = NewShipsInfos()
+    prova.Set(DEATHSTAR,allShips.Deathstar)
+    
+    fleet = NewFleet()
+    fleet.SetOrigin("P:2:229:8")
+    fleet.SetDestination("M:5:133:7")
+    fleet.SetSpeed(THIRTY_PERCENT)
+    fleet.SetMission(PARK)
+    fleet.SetShips(*prova)
+    fleet.SendNow()
+}
+
+CronExec("15 28 07 * * *", func(){ripping()})
+CronExec("22 41 10 * * *", func(){schieroLungo()})
+
+
+<- OnQuitCh
