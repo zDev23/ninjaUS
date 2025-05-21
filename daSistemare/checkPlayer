@@ -1,0 +1,93 @@
+//**************************ANCORA DA SISTEMARE********************************************
+
+/*minActivity   = 30   // This number has to be higher than 15
+checkInterval = 5    // Check every 5min
+targets = {          // Targets to watch
+    "Target1": [
+        "1:28:8",
+        "1:29:8",
+    ],
+}
+
+//------------------------------------------------------------------------------
+
+if minActivity <= 15 {
+    LogError("minActivity must be greater than 15")
+    return
+}
+
+for {
+    for targetName, planetsCoord in targets {
+        hasActivity = false
+        visitedCoords = {}
+        for planetCoord in planetsCoord {
+            coord, err = ParseCoord(planetCoord)
+            if err != nil {
+                LogError("Failed to parse coord " + planetCoord)
+                continue
+            }
+            cached = visitedCoords[coord.Galaxy + ":" + coord.System]
+            systemInfos = nil
+            if cached == nil {
+                systemInfos, err = GalaxyInfos(coord.Galaxy, coord.System)
+                if err != nil {
+                    LogError("Failed to get system infos for " + coord)
+                    continue
+                }
+                visitedCoords[coord.Galaxy + ":" + coord.System] = systemInfos
+            } else {
+                systemInfos = cached
+            }
+            planetInfos, err = systemInfos.Position(coord.Position)
+            if err != nil {
+                LogError("Failed to get planet infos for " + coord)
+                continue
+            }
+            if planetInfos == nil {
+                LogError("Failed to get planet infos for " + coord)
+                continue
+            }
+            if planetInfos.Activity > 0 && planetInfos.Activity < minActivity {
+                hasActivity = true
+                break
+            }
+            if planetInfos.Moon != nil && planetInfos.Moon.Activity > 0 && planetInfos.Moon.Activity < minActivity {
+                hasActivity = true
+                break
+            }
+        }
+        if hasActivity {
+            Print("Some activities detected for " + targetName)
+        } else {
+            Print("No activty in the last " + minActivity + "min for " + targetName)
+        }
+    }
+    Sleep(checkInterval * 60 * 1000) // Sleep 5min
+}*/
+
+
+func spiata(bersaglio){
+    fleet = NewFleet()
+    fleet.SetOrigin("M:1:171:8")
+    fleet.SetDestination(bersaglio)
+    fleet.SetMission(SPY)
+    fleet.AddShips(ESPIONAGEPROBE, 30)
+    fleet, err = fleet.SendNow()
+    Print("Mandata spiata")
+}
+
+for{
+    
+    coord, err = ParseCoord("1:172:8")
+    systemInfos, err = GalaxyInfos(coord.Galaxy, coord.System)
+    planetInfo, err = systemInfos.Position(coord.Position)
+
+    if planetInfo.Moon.Activity > 0 {
+        Print(planetInfo.Moon.Name)
+        SendDiscord(DISCORD_WEBHOOK, "<#1|Ban-us> Attività su luna. Mando spiata")
+        spiata("M:1:172:8")
+    }else{
+        Print("no attività")
+    }
+    SleepSec(900)
+}
