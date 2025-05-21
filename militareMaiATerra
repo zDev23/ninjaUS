@@ -1,0 +1,41 @@
+func riciclo(secRic){
+    //Calcolo tempo totale volo andata
+    partenza = NewCoordinate(2,229,9, MOON_TYPE)
+    arrivo = NewCoordinate(2,229,9, DEBRIS_TYPE)
+    
+        //LogInfo("tempo Compatibile. Tempo volo "+ShortDur(secs)+ " Richiamo "+ShortDur(richiamo))
+        fleet = NewFleet()
+        fleet.SetOrigin(partenza)
+        fleet.SetDestination(arrivo)
+        fleet.SetSpeed(TEN_PERCENT)
+        fleet.SetMission(RECYCLEDEBRISFIELD)
+        fleet.SetAllResources()
+        fleet.SetAllShips()
+        fleet.SetRecallIn(secRic) 
+        tempo,fuel = fleet.FlightTime()
+        //LogInfo("Consumo Carb = "+Dotify(fuel))
+        fleet, err = fleet.SendNow()
+        if err == nil {
+            LogInfo("Flotta inviata " + fleet.ID + " Consumo = "+ Dotify(fuel))
+            //SendTelegram(TELEGRAM_CHAT_ID,"<Yin> Flotta inviata in fleet richiamato. Richiamo fra "+ShortDur(richiamo))
+        } else {
+            LogError("Failed to create cronjob for " + err)
+            //SendTelegram(TELEGRAM_CHAT_ID,"Errore = "+err)
+        }
+
+}
+
+CronExec("00 00 08 * * *",func(){riciclo(2400)})
+CronExec("00 21 09 * * *",func(){riciclo(2400)})
+CronExec("00 42 10 * * *",func(){riciclo(2280)})
+
+CronExec("00 04 12 * * *",func(){    
+    oraArrivo = "07:58:00"
+    origin = NewCoordinate(2,229,9, MOON_TYPE)  
+    arrive = NewCoordinate(2,229,8, MOON_TYPE)
+    secRichiamo,oraRichiamo = calcoloRichiamo(origin,arrive,oraArrivo)
+    fleeMilitarev2(origin,arrive,secRichiamo,oraRichiamo)
+    
+})
+
+<-OnQuitCh
