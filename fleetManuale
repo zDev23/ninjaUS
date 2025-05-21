@@ -1,0 +1,21 @@
+time = import("time")
+fmt = import("fmt")
+
+
+//********************CIVILE******************
+
+oraArrivo = "09:00:00"
+origin = NewCoordinate(2,229,8, MOON_TYPE)  
+arrive = NewCoordinate(2,229,9, MOON_TYPE)
+secRichiamo,oraRichiamo = calcoloRichiamo(origin,arrive,oraArrivo)
+
+//fleeCivileSpedi(origin,arrive,secRichiamo,oraRichiamo)
+fleetCivile(origin,arrive,secRichiamo,oraRichiamo)
+
+//****************MILITARE****************
+
+/*oraArrivo = "07:58:00"
+origin = NewCoordinate(5,133,7, MOON_TYPE)  
+arrive = NewCoordinate(5,134,7, MOON_TYPE)
+secRichiamo,oraRichiamo = calcoloRichiamo(origin,arrive,oraArrivo)
+fleeMilitareSpedi(origin,arrive,secRichiamo,oraRichiamo)*/
