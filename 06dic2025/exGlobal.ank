@@ -1,0 +1,302 @@
+time = import("time")
+fmt = import("fmt")
+
+
+func fleetMilitareCivile(partenza,arrivo,s,timeRecall){
+    
+    origine = partenza
+    destinazione = arrivo
+
+    luna, errM = GetMoon(origine)
+    
+    //Preparo le navi da caricare   
+    allShips, err= luna.GetShips()
+    //Print(allShips)
+    prova,_ = NewShipsInfos()
+    
+    prova.Set(LIGHTFIGHTER,allShips.LightFighter)
+    prova.Set(HEAVYFIGHTER,allShips.HeavyFighter)
+    prova.Set(CRUISER,allShips.Cruiser)
+    prova.Set(BATTLESHIP,allShips.Battleship)
+    prova.Set(BATTLECRUISER,allShips.Battlecruiser)
+    prova.Set(BOMBER,allShips.Bomber)
+    prova.Set(DESTROYER,allShips.Destroyer)
+    prova.Set(DEATHSTAR,allShips.Deathstar-1)
+    prova.Set(REAPER,allShips.Reaper)
+    prova.Set(PATHFINDER,allShips.Pathfinder)
+    prova.Set(SMALLCARGO,allShips.SmallCargo)
+    prova.Set(RECYCLER,allShips.Recycler-1)
+    prova.Set(ESPIONAGEPROBE,allShips.EspionageProbe-100)
+    prova.Set(COLONYSHIP,allShips.ColonyShip-1)
+
+
+    //Print(prova)
+    //Calcolo consumo della flotta
+    secs, cons = FlightTime(origine,destinazione, TEN_PERCENT, *prova, PARK)
+    
+    //Qua calcolo quanto caricare per lasciare 10kk di deu più il consumo carb
+    //minDeu = 10000000 + cons
+    //risorseTot,err = GetResources(origine)
+    //deu = 0
+    //if risorseTot.Deuterium <= minDeu{
+    //    deu = 0
+    //}else{
+    //    deu = risorseTot.Deuterium - minDeu
+    //}
+        
+    risorseDaCaricare = NewResources(0,0,100000000)
+
+//Lancio la flotta
+  
+    fleet = NewFleet()
+    fleet.SetOrigin(origine)
+    fleet.SetDestination(destinazione)
+    fleet.SetSpeed(TEN_PERCENT)
+    fleet.SetMission(PARK)
+    fleet.SetResources(risorseDaCaricare)
+    fleet.SetShips(*prova)
+    fleet.SetRecallIn(s) //Setto il richiamo TOGLI I COMMENTI
+    
+    secs,fuel = fleet.FlightTime()
+    
+    //LogInfo("Consumo Carburante = "+ Dotify(fuel))
+    fleet, err = fleet.SendNow() //Lancio flotta
+    
+    if err == nil {
+        LogInfo("<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Flotta inviata ID = " + fleet.ID + " Consumo carburante " + Dotify(fuel))
+        SendTelegram(TELEGRAM_CHAT_ID,"<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Fleet Militare. Recall Recall at "+ timeRecall + " Consumo carburante " + Dotify(fuel) ) 
+        
+    }else{
+        LogError("Failed to create cronjob for " + err)
+    }
+}
+
+
+
+func fleetCivile(partenza,arrivo,secRecall,timeRecall){
+    
+    origine = partenza
+    destinazione = arrivo
+
+    //Lancio la flotta
+  
+    fleet = NewFleet()
+    fleet.SetOrigin(origine)
+    fleet.SetDestination(destinazione)
+    fleet.SetSpeed(TEN_PERCENT)
+    fleet.SetMission(PARK)
+    fleet.SetAllResources()
+    fleet.SetAllShips()
+    fleet.SetRecallIn(secRecall) //Setto il richiamo TOGLI I COMMENTI
+    
+    secs,fuel = fleet.FlightTime()
+    
+    //LogInfo("Consumo Carburante = "+ Dotify(fuel))
+    
+    fleet, err = fleet.SendNow() //Lancio flotta
+    if err == nil {
+        LogInfo("<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Flotta inviata ID = " + fleet.ID + " Consumo carburante " + Dotify(fuel))
+        SendTelegram(TELEGRAM_CHAT_ID,"<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Fleet Civile. Recall Recall at "+ timeRecall + " Consumo carburante " + Dotify(fuel) ) 
+        
+    }else{
+        LogError("Failed to create cronjob for " + err)
+    }
+}
+
+
+func fleeMilitareSpedi(partenza,arrivo,s,timeRecall){
+    
+    origine = partenza
+    destinazione = arrivo
+
+    luna, errM = GetMoon(origine)
+    
+    //Preparo le navi da caricare   
+    allShips, err= luna.GetShips()
+    //Print(allShips)
+    prova,_ = NewShipsInfos()
+    
+    prova.Set(LIGHTFIGHTER,allShips.LightFighter)
+    prova.Set(HEAVYFIGHTER,allShips.HeavyFighter)
+    prova.Set(CRUISER,allShips.Cruiser)
+    prova.Set(BATTLESHIP,allShips.Battleship)
+    prova.Set(BATTLECRUISER,allShips.Battlecruiser)
+    prova.Set(BOMBER,allShips.Bomber)
+    prova.Set(DESTROYER,allShips.Destroyer)
+    prova.Set(DEATHSTAR,allShips.Deathstar-2)
+    prova.Set(REAPER,allShips.Reaper-4)
+    prova.Set(PATHFINDER,allShips.Pathfinder-4)
+    prova.Set(SMALLCARGO,allShips.SmallCargo)
+    prova.Set(RECYCLER,allShips.Recycler-2)
+    prova.Set(ESPIONAGEPROBE,allShips.EspionageProbe-2000)
+    
+
+
+    //Print(prova)
+    //Calcolo consumo della flotta
+    secs, cons = FlightTime(origine,destinazione, TEN_PERCENT, *prova, PARK)
+    
+    //Qua calcolo quanto caricare per lasciare 10kk di deu più il consumo carb
+    minDeu = 10000000 + cons
+    risorseTot,err = GetResources(origine)
+    deu = 0
+    if risorseTot.Deuterium <= minDeu{
+        deu = 0
+    }else{
+        deu = risorseTot.Deuterium - minDeu
+    }
+        
+    risorseDaCaricare = NewResources(0,0,200000000)
+
+//Lancio la flotta
+  
+    fleet = NewFleet()
+    fleet.SetOrigin(origine)
+    fleet.SetDestination(destinazione)
+    fleet.SetSpeed(TEN_PERCENT)
+    fleet.SetMission(PARK)
+    fleet.SetResources(risorseDaCaricare)
+    fleet.SetShips(*prova)
+    fleet.SetRecallIn(s) //Setto il richiamo TOGLI I COMMENTI
+    
+    secs,fuel = fleet.FlightTime()
+    
+    //LogInfo("Consumo Carburante = "+ Dotify(fuel))
+    fleet, err = fleet.SendNow() //Lancio flotta
+    
+    if err == nil {
+        LogInfo("<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Flotta inviata ID = " + fleet.ID + " Consumo carburante " + Dotify(fuel))
+        SendTelegram(TELEGRAM_CHAT_ID,"<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Fleet Militare. Recall Recall at "+ timeRecall + " Consumo carburante " + Dotify(fuel) ) 
+        
+    }else{
+        LogError("Failed to create cronjob for " + err)
+    }
+}
+
+
+func fleeCivileSpedi(partenza,arrivo,secRecall,timeRecall){
+    
+    origine = partenza
+    destinazione = arrivo
+
+    luna, errM = GetMoon(origine)
+    
+    //Preparo le navi da caricare   
+    allShips, err= luna.GetShips()
+    //Print(allShips)
+    prova,_ = NewShipsInfos()
+    
+    prova.Set(DEATHSTAR,allShips.Deathstar-1)
+    prova.Set(LARGECARGO,allShips.LargeCargo-11500)
+
+    
+    //Print(prova)
+    //Calcolo consumo della flotta
+    secs, cons = FlightTime(origine,destinazione, TEN_PERCENT, *prova, PARK)
+    
+    //Qua calcolo quanto caricare per lasciare 10kk di deu più il consumo carb
+    minDeu = 10000000 + cons
+    risorseTot,err = GetResources(origine)
+    deu = 0
+    if risorseTot.Deuterium <= minDeu{
+        deu = 0
+    }else{
+        deu = risorseTot.Deuterium - minDeu
+    }
+        
+    risorseDaCaricare = NewResources(risorseTot.Metal,risorseTot.Crystal,deu)
+
+//Lancio la flotta
+  
+    fleet = NewFleet()
+    fleet.SetOrigin(origine)
+    fleet.SetDestination(destinazione)
+    fleet.SetSpeed(TEN_PERCENT)
+    fleet.SetMission(PARK)
+    fleet.SetResources(risorseDaCaricare)
+    fleet.SetShips(*prova)
+    fleet.SetRecallIn(secRecall) //Setto il richiamo TOGLI I COMMENTI
+    
+    secs,fuel = fleet.FlightTime()
+    
+    //LogInfo("Consumo Carburante = "+ Dotify(fuel))
+    
+    fleet, err = fleet.SendNow() //Lancio flotta
+    if err == nil {
+        LogInfo("<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Flotta inviata ID = " + fleet.ID + " Consumo carburante " + Dotify(fuel))
+        SendTelegram(TELEGRAM_CHAT_ID,"<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Fleet Civile. Recall Recall at "+ timeRecall + " Consumo carburante " + Dotify(fuel) ) 
+        
+    }else{
+        LogError("Failed to create cronjob for " + err)
+    }
+}
+
+
+
+
+func fleetRiciclo(partenza,arrivo,secRic,timeRecall){
+    //Calcolo tempo totale volo andata
+    //partenza = NewCoordinate(2,229,8, MOON_TYPE)
+    //arrivo = NewCoordinate(2,229,8, DEBRIS_TYPE)
+    
+    luna, errM = GetMoon(partenza)
+    
+    //Preparo le navi da caricare   
+    allShips, err= luna.GetShips()
+    //Print(allShips)
+    
+    
+    
+    fleet = NewFleet()
+    fleet.SetOrigin(partenza)
+    fleet.SetDestination(arrivo)
+    fleet.SetSpeed(TEN_PERCENT)
+    fleet.SetMission(RECYCLEDEBRISFIELD)
+    fleet.SetAllResources()
+    fleet.SetAllShips()
+    fleet.SetRecallIn(secRic)
+    
+    secs,fuel = fleet.FlightTime()
+    
+    //LogInfo("Consumo Carburante = "+ Dotify(fuel))
+    fleet, err = fleet.SendNow() //Lancio flotta
+    
+    if err == nil {
+        LogInfo("<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Flotta inviata riciclo ID = " + fleet.ID + " Consumo carburante " + Dotify(fuel))
+        SendTelegram(TELEGRAM_CHAT_ID,"<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Fleet Militare Temp. Recall Recall at "+ timeRecall + " Consumo carburante " + Dotify(fuel) ) 
+        
+    }else{
+        LogError("Failed to create cronjob for " + err)
+    }
+}
+
+
+func fleetMilitare(partenza,arrivo,secRecall,timeRecall){
+    
+    origine = partenza
+    destinazione = arrivo
+
+    //Lancio la flotta
+  
+    fleet = NewFleet()
+    fleet.SetOrigin(origine)
+    fleet.SetDestination(destinazione)
+    fleet.SetSpeed(TEN_PERCENT)
+    fleet.SetMission(PARK)
+    fleet.SetAllResources()
+    fleet.SetAllShips()
+    fleet.SetRecallIn(secRecall) //Setto il richiamo TOGLI I COMMENTI
+    
+    secs,fuel = fleet.FlightTime()
+    
+    //LogInfo("Consumo Carburante = "+ Dotify(fuel))
+    
+    fleet, err = fleet.SendNow() //Lancio flotta
+    if err == nil {
+        LogInfo("<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Flotta inviata ID = " + fleet.ID + " Consumo carburante " + Dotify(fuel))
+        SendTelegram(TELEGRAM_CHAT_ID,"<"+GetUniverseName()+"-"+GetCachedPlayer().PlayerName+"> Fleet Militare. Recall Recall at "+ timeRecall + " Consumo carburante " + Dotify(fuel) ) 
+        
+    }else{
+        LogError("Failed to create cronjob for " + err)
+    }
+}
