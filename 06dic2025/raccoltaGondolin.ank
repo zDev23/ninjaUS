@@ -1,0 +1,41 @@
+timeCoord = {
+    "07:13:04":["M:2:1:8","M:2:180:8","M:2:357:8","M:3:375:8","M:3:191:8","M:3:12:8",],  
+    "07:26:24":["M:1:5:8","M:1:171:8","M:1:374:8","M:4:7:8","M:4:190:8","M:4:317:8"], 
+    "07:35:50":["M:5:11:8","M:5:489:8"],
+    
+    "12:13:04":["M:2:1:8","M:2:180:8","M:2:357:8","M:3:375:8","M:3:191:8","M:3:12:8",],  
+    "12:26:24":["M:1:5:8","M:1:171:8","M:1:374:8","M:4:7:8","M:4:190:8","M:4:317:8"], 
+    "12:45:50":["M:5:11:8","M:5:489:8"],
+}
+//    "07:13:04":["M:2:1:8","M:2:229:9","M:2:229:8","M:3:375:8","M:3:191:8","M:3:12:8",],  
+
+
+master="M:5:488:8"
+
+CronExec("00 00 07 * * *", func(){RepatriateNow()})
+CronExec("00 00 12 * * *", func(){RepatriateNow()})
+
+for time, coord in timeCoord{
+  func(time, coord) {
+    entryID, err = CronExec(time, func() {
+        for c in coord{
+            raccoltaDeuMin(30000000,c,master)
+            LogInfo("<Himalia-Ban> Partito Trasp da "+c)
+            //SleepRandSec(4,8)
+            SleepSec(5)
+        }
+        })
+  }(time, coord)
+}
+
+CronExec("00 00 13 * * *",func(){
+    oraArrivo = "07:58:30"
+    origin = NewCoordinate(5,488,8, MOON_TYPE)  
+    arrive = NewCoordinate(5,488,9, MOON_TYPE)
+    secRichiamo,oraRichiamo = calcoloRichiamo(origin,arrive,oraArrivo)
+    fleetTotale(origin,arrive,secRichiamo,oraRichiamo)
+    //fleeCivileSpedi(origin,arrive,secRichiamo,oraRichiamo)
+})
+
+
+<- OnQuitCh
