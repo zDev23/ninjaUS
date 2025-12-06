@@ -1,0 +1,31 @@
+func spio16(){
+    SendTelegram(TELEGRAM_CHAT_ID,"Inizio invio flotte spio")
+    
+    lune = GetCachedMoons()
+    
+    for l in lune{
+        sistema = l.GetCoordinate().System
+        destination = NewCoordinate(l.GetCoordinate().Galaxy,sistema, 16, PLANET_TYPE)
+        fleet = NewFleet()
+        fleet.SetOrigin(l)
+        fleet.SetDestination(destination)
+        fleet.SetSpeed(THIRTY_PERCENT)
+        fleet.SetMission(SPY)
+        fleet.SetAllResources()
+        fleet.SetAllShips()
+        fleet, err = fleet.SendNow()
+        //SendTelegram(TELEGRAM_CHAT_ID,"Flotta Inviata da "+l.Coordinate+ " a "+destination)
+        SleepSec(7)
+    }
+    
+    SendTelegram(TELEGRAM_CHAT_ID,"<#1|Himalia-us|Ban> Flotte mandate in spio pos 16")
+}
+
+
+
+CronExec("00 45 23 * * *",func(){
+    spio16()
+})
+
+
+<- OnQuitCh
