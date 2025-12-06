@@ -1,0 +1,13 @@
+lune = GetMoons()
+
+for l in lune{
+    res,err=l.GetResources()
+    if res.Metal == 0 && res.Crystal == 0 && res.Deuterium == 0 {
+        Print("Luna "+l.Coordinate+" Tutto zero")
+        SendTelegram(TELEGRAM_CHAT_ID,"<#1|Himalia-us|Ban> Tutto a posto ")
+    }else{
+        Print("Met "+res.Metal+" Cri = "+res.Crystal+" Deu = "+res.Deuterium)    
+        SendTelegram(TELEGRAM_CHAT_ID,"<#1|Himalia-us|Ban> Attenzione luna "+ l.Coordinate+" con res Met "+res.Metal+" Cri = "+res.Crystal+" Deu = "+res.Deuterium)
+    }
+    
+}
