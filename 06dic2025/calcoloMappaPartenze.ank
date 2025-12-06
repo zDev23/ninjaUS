@@ -1,0 +1,47 @@
+//Robe che servoo allo script
+time = import ("time")
+fmt = import("fmt")
+
+distOrario = {} //mappa distanza:orario
+orariPartenza = {} //mappa con coord:orario
+orariCron = [] //Vettore con solamente orari di partenza
+cron = {} //questa dovrebbe essere la GEOTHERMALPOWERPLANTS
+
+//Set nave per trasporti, servono per calcolare quanto tempo ci mettono
+ships = NewShipsInfos()
+ships.Set(LARGECARGO,1)
+//Costanti
+orarioDiArrivo = "12:58:00" //Qui metto l'orario di arrivo che voglio
+oraDiArrivo,err= ParseNextDatetimeAt(orarioDiArrivo)
+master = NewCoordinate(5,133,7,MOON_TYPE) //Qui dove voglio raccogliere
+//Fine setting
+
+lune = GetMoons()
+
+//Costruisco vettore delle ore di partenza
+for l in lune{
+    if l.GetCoordinate() != master {
+        dist = Distance(l.GetCoordinate(), master) //distanza
+        secs, fuel = FlightTime(l.GetCoordinate(), master, HUNDRED_PERCENT, *ships, TRANSPORT) //Tempo 
+        n = oraDiArrivo.Add(-secs * time.Second) //qua calcolo orario di arrivo desiderato - tempo viaggio
+        oraForm = n.Format("15:04:01") //formatto orario in modo leggibile hh:mm:ss
+        //Scrivo i vettori/mappe
+        distOrario[oraForm] = dist
+        orariPartenza[l.GetCoordinate()] = oraForm
+    }
+}
+
+for ora,d in distOrario{
+    cron[ora] = ""
+    for c,t in orariPartenza{
+        if t==ora{
+            cron[ora] +=c
+        }
+    }
+    orariCron += d //Creo vettore degli orari per la schedulazione
+}
+
+//LogInfo("orari Prtenza ---> " + orariPartenza)
+//LogInfo("distOrario ---> " + distOrario)
+//LogInfo("Orari Cron " + orariCron)
+LogInfo("Cron " + cron)
