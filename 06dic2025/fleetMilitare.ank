@@ -1,0 +1,13 @@
+time = import("time")
+fmt = import("fmt")
+
+CronExec("00 35 08 * * *",func(){    
+    oraArrivo = "08:30:00"
+    origin = NewCoordinate(5,488,8, MOON_TYPE)  
+    arrive = NewCoordinate(5,489,8, MOON_TYPE)
+    secRichiamo,oraRichiamo = calcoloRichiamo(origin,arrive,oraArrivo)
+    //fleeMilitareSpedi(origin,arrive,secRichiamo,oraRichiamo)
+    //fleetMilitareCivile(origin,arrive,secRichiamo,oraRichiamo)
+    fleetMilitareCivile(origin,arrive,secRichiamo,oraRichiamo)
+    
+})<-OnQuitCh
